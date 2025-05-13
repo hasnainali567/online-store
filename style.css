@@ -73,9 +73,10 @@ body{
 }
 
 
-.btn{
-    align-self:self-end;
+.fa-user-circle{
+    font-size: 2rem;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
 }
-
-
 
