@@ -100,7 +100,7 @@ function ModalCategoriesBtn(data, categoryArr) {
 
   let allBtns = "";
   for (let i = 0; i < categoryArr.length; i++) {
-    allBtns += `<button class="categoryBtn btn btn-outline-primary">${categoryArr[i]}</button>`;
+    allBtns += `<button class="categoryBtn btn btn-outline-dark">${categoryArr[i]}</button>`;
   }
   modalCategoryList.innerHTML = allBtns;
 

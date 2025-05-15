@@ -1,0 +1,105 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+    justify-content: space-between;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
+    border-radius: 10px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    transition: 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="file"]:focus {
+    border-color: #333;
+    box-shadow: 0 0 5px rgba(51, 51, 51, 0.2);
+}
+
+#signUPBtn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+#signUPBtn:hover {
+    background-color: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+.btn-close {
+    background-color: #ddd;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+span#loginLink {
+    color: #007bff;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+span#loginLink:hover {
+    text-decoration: underline;
+}
+
+
+.emailInp {
+    width: 374px;
+}
+
+#loginBtnSpinner {
+    height: 27px;
+    width: 27px;
+    margin-inline: 10px;
+    border-width: 4px;
+}
+
+@media screen and (max-width : 470px) {
+    .loginDiv{
+        width: 100% !important;
+    }
+
+    .emailInp {
+    width: 100%;
+}
+}
+
+
