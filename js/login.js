@@ -63,7 +63,14 @@ loginBtn.addEventListener("click", async (e) => {
       password
     );
 
+    const user = userCredential.user;
     console.log("Login Successfully : ", userCredential.user);
+
+    if (user.email === 'hasskhanali27@gmail.com') {
+      window.location = 'dashboard.html';
+    } else {
+      window.location = 'userProfile.html';
+    }
   } catch (error) {
     console.log("Login Error : " + error.message);
     loginBtn.innerHTML = "";

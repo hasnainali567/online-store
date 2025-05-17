@@ -15,8 +15,8 @@ let signUPBtn = document.getElementById("signUPBtn");
 let emailInp = document.querySelector(".emailInp");
 let nameInp = document.querySelector(".nameInp");
 let passInp = document.getElementById("inputPassword6");
-let picInt = document.getElementById("formFile");
-let enterdImage = document.getElementById("enterdImage");
+// let picInt = document.getElementById("formFile");
+// let enterdImage = document.getElementById("enterdImage");
 
 let isNameOk = false;
 let isEmailOk = false;
@@ -52,35 +52,78 @@ emailInp.addEventListener("input", () => {
 });
 
 passInp.addEventListener("input", () => {
-  if (
-    passInp.value.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
-  ) {
+
+  let pass = passInp.value;
+  let validation = document.getElementById('validation');
+  validation = validation.querySelectorAll('p');
+
+  let passLength = checkCondition(pass.length >= 8, validation[0], validation[0].innerText);
+  let passUpper = checkCondition(pass.match(/[A-Z]/), validation[1], validation[1].innerText);
+  let passLower = checkCondition(pass.match(/[a-z]/), validation[2], validation[2].innerText);
+  let passNum = checkCondition(pass.match(/[0-9]/), validation[3], validation[3].innerText);
+ 
+  // if (pass.length >= 8) {
+  //   let text = (validation[0].innerText);
+  //   validation[0].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
+  //   passLength = true;
+  // } else {
+  //   passLength = false;
+  //   validation[0].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 8 characters`
+    
+  // }
+  
+  // if (pass.match(/[A-Z]/)) {
+  //   let text = (validation[1].innerText);
+  //   validation[1].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
+  //   passUpper = true;
+  // } else {
+  //   passUpper = false;
+  //   validation[1].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 1 upper case`
+  // }
+
+
+  // if (pass.match(/[a-z]/)) {
+  //   let text = (validation[2].innerText);
+  //   validation[2].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
+  //   passLower = true;
+  // } else {
+  //   passLower = false;
+  //   validation[2].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 1 lower case`
+  // }
+
+
+  // if (pass.match(/[0-9]/)) {
+  //   let text = (validation[3].innerText);
+  //   validation[3].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
+  //   passNum = true;
+  // } else {
+  //   passNum = false;
+  //   validation[3].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 1 number`
+  // }
+  
+  if (passLength && passUpper && passLower && passNum) {
     isPassOk = true;
     if (isEmailOk && isNameOk) {
-      signUPBtn.removeAttribute("disabled");
+      signUPBtn.removeAttribute('disabled')
     }
-  } else {
-    isPassOk = false;
-    signUPBtn.setAttribute("disabled", true);
   }
 
-  console.log(isPassOk);
 });
 
-picInt.addEventListener("change", () => {
-  const file = picInt.files[0];
+// picInt.addEventListener("change", () => {
+//   const file = picInt.files[0];
 
-  if (file) {
-    const reader = new FileReader();
+//   if (file) {
+//     const reader = new FileReader();
 
-    reader.onload = (e) => {
-      enterdImage.src = e.target.result;
-      enterdImage.classList.remove("d-none");
-    };
+//     reader.onload = (e) => {
+//       enterdImage.src = e.target.result;
+//       enterdImage.classList.remove("d-none");
+//     };
 
-    reader.readAsDataURL(file);
-  }
-});
+//     reader.readAsDataURL(file);
+//   }
+// });
 
 signUPBtn.addEventListener("click", async (e) => {
   e.preventDefault();
@@ -98,28 +141,45 @@ signUPBtn.addEventListener("click", async (e) => {
       password
     );
 
-    let file = picInt.files[0];
-
     let user = userCredential.user;
-    let downloadURL = "";
 
-    if (file) {
-      const storageRef = ref(
-        storage,
-        `profilePics/${user.uid}/${Date.now()}_${file.name}`
-      );
-      await uploadBytes(storageRef, file);
-      downloadURL = await getDownloadURL(storageRef);
-    }
-    await setDoc(doc(db, "user", user.uid), {
-      name,
-      email,
-      profilePic: downloadURL,
-    });
+    window.location = 'userProfile.html';
+    
+
+    // let file = picInt.files[0];
+
+    // console.log(file);
+    
+
+    // let user = userCredential.user;
+    
+
+    console.log(user);
+    
+    console.log('signup successfully');
+    
   } catch (error) {
     console.log("Sign Up Error : ", error.message);
+    if (error.message.includes('email-already-in-use'))  {
+      let already = document.getElementById('already');
+      already.innerHTML = `email already in use Plz! <a href="login.html" id="">login</a>`
+      
+    } else {
+      alert('Sign Up Error : Something went wrong!')
+    }
     signUPBtn.innerHTML = "";
     signUPBtn.innerText = "Sign Up";
-    alert("Sign up error", error.message);
   }
 });
+
+
+
+function checkCondition(condition, element, text) {
+  if (condition) {
+    element.innerHTML = `<i class="bg-dark text-light fa-solid fa-check"></i> ${text}`;
+    return true;
+  } else {
+    element.innerHTML = `<i class="fa-solid fa-xmark"></i> ${text}`;
+    return false;
+  }
+}

@@ -28,14 +28,14 @@ onAuthStateChanged(auth, async (user)=>{
         userName.forEach((elem) => elem.innerText = name)
     }
 
-    try {
-        let docRef = doc(db, 'user', user.uid);
-        let docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            console.log(docSnap.data());
+    // try {
+    //     let docRef = doc(db, 'user', user.uid);
+    //     let docSnap = await getDoc(docRef);
+    //     if (docSnap.exists()) {
+    //         console.log(docSnap.data());
             
-        }
-    } catch (error) {
+    //     }
+    // } catch (error) {
         
-    }
+    // }
 })
