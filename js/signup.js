@@ -143,8 +143,12 @@ signUPBtn.addEventListener("click", async (e) => {
 
     let user = userCredential.user;
 
+    await setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
+      name,
+      email,
+    })
     window.location = 'userProfile.html';
-    
 
     // let file = picInt.files[0];
 
