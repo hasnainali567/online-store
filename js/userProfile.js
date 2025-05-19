@@ -3,8 +3,10 @@ import { auth, signOut, onAuthStateChanged, getDoc, db, doc, sendEmailVerificati
 let logoutBtn = document.getElementById('logoutBtn');
 let verifyBtn = document.getElementById('verifyBtn');
 let cartDiv = document.getElementById('cartDiv');
+let backBtn = document.getElementById('backBtn');
+let editCart = document.getElementById('editCart');
 let spinner = document.getElementById('spinner');
-let userCart = []
+
 
 
 onAuthStateChanged(auth, async (user) => {
@@ -24,11 +26,11 @@ onAuthStateChanged(auth, async (user) => {
             console.log('data---->', docSnap.data());
             let data = docSnap.data();
             let { name, email } = data;
-            userCart = data.cart;
 
 
-            for (let i = 0; i < userCart.length; i++) {
-                let product = await fetch(`https://dummyjson.com/products/${userCart[i]}`);
+            if(data.cart) {
+                for (let i = 0; i < data.cart.length; i++) {
+                let product = await fetch(`https://dummyjson.com/products/${data.cart[i]}`);
                 product = await product.json();
 
                 console.log(product);
@@ -46,9 +48,9 @@ onAuthStateChanged(auth, async (user) => {
                                         <p class="cart-product-des mb-2 m-sm-0 text-wrap">${product.description}</p>
                                     </div>
                                     <div class="col-auto d-flex flex-row flex-md-column justify-content-between">
-                                        <span class="align-self-end p-2 px-3 rounded bg-dark text-light"><i
+                                        <span class="align-self-end p-2 px-3 rounded bg-outline-dark "><i
                                                 class="fa-solid fa-trash"></i></span>
-                                        <button class="btn btn-outline-dark">Check out</button>
+                                        <button class="btn btn-dark">Check out</button>
                                     </div>
                                 </div>
                             </div>
@@ -56,6 +58,7 @@ onAuthStateChanged(auth, async (user) => {
                     </div>`
 
                     cartDiv.innerHTML += cartElem;
+                }
                 
             }
 
@@ -84,5 +87,42 @@ verifyBtn.addEventListener('click', () => {
         });
 })
 
+backBtn.addEventListener('click', ()=>{
+    window.location = backBtn.value;
+})
 
 
+console.log(editCart);
+
+let btns = editCart.parentElement.querySelectorAll('button');
+
+editCart.addEventListener('click', (e)=> {
+    console.log(btns);
+    
+    btns[1].classList.remove('d-none')
+    btns[2].classList.remove('d-none')
+    btns[3].classList.remove('d-none')
+    editCart.classList.add('d-none');
+})
+
+btns[1].addEventListener('click', ()=>{
+
+    btns[1].classList.add('d-none')
+    btns[2].classList.add('d-none')
+    btns[3].classList.add('d-none')
+    editCart.classList.remove('d-none');
+})
+btns[2].addEventListener('click', ()=>{
+
+    btns[1].classList.add('d-none')
+    btns[2].classList.add('d-none')
+    btns[3].classList.add('d-none')
+    editCart.classList.remove('d-none');
+})
+btns[3].addEventListener('click', ()=>{
+
+    btns[1].classList.add('d-none')
+    btns[2].classList.add('d-none')
+    btns[3].classList.add('d-none')
+    editCart.classList.remove('d-none');
+})

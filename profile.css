@@ -44,17 +44,60 @@ body {
         width: 100px;
         margin-bottom: 10px;
     }
-
+    
     .cartText {
         flex-direction: column !important;
     }
-
+    
     .cart-product-name {
         font-size: 1.3rem !important;
     }
-
+    
     .cart-product-des {
         font-size: .9rem ;
         margin-bottom: 10px;
+    }
+}
+@media screen and (max-width: 450px) {
+    #profilePic {
+        height: 120px;
+        width: 120px;
+    }
+}
+
+
+@media screen and (max-width: 410px) {
+    #profilePic {
+        height: 100px;
+        width: 100px;
+    }
+    
+    .userName {
+        font-size: 1.3rem !important;
+    }
+    
+    .userEmail {
+        font-size: .8rem;
+    }
+    #verifyBtn {
+        font-size: .9rem;
+    }
+}
+
+
+@media screen and (max-width: 384px) {
+    #dNone {
+        display: none;
+    }
+
+    #dBlock {
+        display: block !important;
+    }
+
+
+
+    #info {
+        width: 100% !important;
+        align-items: center !important;
     }
 }
