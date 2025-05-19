@@ -1,35 +1,68 @@
-import { auth, signOut, onAuthStateChanged, getDoc, db, doc, sendEmailVerification  } from "./firebase.js";
+import { auth, signOut, onAuthStateChanged, getDoc, db, doc, sendEmailVerification } from "./firebase.js";
 
 let logoutBtn = document.getElementById('logoutBtn');
 let verifyBtn = document.getElementById('verifyBtn');
+let cartDiv = document.getElementById('cartDiv');
+let spinner = document.getElementById('spinner');
+let userCart = []
 
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-console.log(user);
         let Verified = document.getElementById('Verified');
         let userName = document.querySelectorAll('.userName');
         let userEmail = document.querySelector('.userEmail');
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
         if (user.emailVerified) {
-            Verified.innerHTML = `<span class="material-symbols-outlined align-self-middle">
-verified
-</span>`
-verifyBtn.innerText = 'Verifeid';
-verifyBtn.setAttribute('disabled', true);
-verifyBtn.classList.add('btn-success')
+            Verified.innerHTML = `<span class="material-symbols-outlined align-self-middle">verified</span>`
+            verifyBtn.innerText = 'Verifeid';
+            verifyBtn.setAttribute('disabled', true);
+            verifyBtn.classList.add('btn-success')
         }
         if (docSnap.exists()) {
-            console.log('data---->' , docSnap.data());
+            console.log('data---->', docSnap.data());
             let data = docSnap.data();
-            let {name, email} = data;
-            console.log(email);
-            
+            let { name, email } = data;
+            userCart = data.cart;
+
+
+            for (let i = 0; i < userCart.length; i++) {
+                let product = await fetch(`https://dummyjson.com/products/${userCart[i]}`);
+                product = await product.json();
+
+                console.log(product);
+                
+                const cartElem = `<div class="bg-light text-dark p-2 p-md-3 rounded w-100 mt-4">
+                        <div class="card-body ">
+                            <div class="d-flex cartText">
+                                <div class="col-auto d-flex">
+                                    <img src="${product.images[0]}"
+                                        class="d-sm-block img-thumbnail cart-image me-2 m-sm-0 me-sm-2" alt="...">
+                                    </div>
+                                <div class="col-auto col-sm-10 d-flex flex-column flex-md-row flex-fill">
+                                    <div class="flex-fill">
+                                        <h3 class="cart-product-name m-0">${product.title}</h3>
+                                        <p class="cart-product-des mb-2 m-sm-0 text-wrap">${product.description}</p>
+                                    </div>
+                                    <div class="col-auto d-flex flex-row flex-md-column justify-content-between">
+                                        <span class="align-self-end p-2 px-3 rounded bg-dark text-light"><i
+                                                class="fa-solid fa-trash"></i></span>
+                                        <button class="btn btn-outline-dark">Check out</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
+
+                    cartDiv.innerHTML += cartElem;
+                
+            }
+
             userEmail.innerText = email
             userName.forEach((elem) => elem.innerText = name)
         }
-        console.log(name);
+        spinner.classList.add('d-none')
     }
 })
 
@@ -43,10 +76,13 @@ logoutBtn.addEventListener('click', () => {
 })
 
 
-verifyBtn.addEventListener('click', ()=>{
+verifyBtn.addEventListener('click', () => {
     sendEmailVerification(auth.currentUser)
-  .then(() => {
-    alert('Plz verify Your Email before continue')
-    window.location = 'userProfile.html'
-  });
+        .then(() => {
+            alert('Plz verify Your Email before continue')
+            window.location = 'userProfile.html'
+        });
 })
+
+
+
