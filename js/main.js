@@ -169,6 +169,7 @@ function filterBySearch(search) {
 cardDiv && cardDiv.addEventListener('click', async (e)=> {
   const btn = e.target.closest('.homeCartBtn')
   if (btn) {
+    if (auth.currentUser) {
     let id = btn.getAttribute('data-id')
     console.log(userId , id);
     let userRef = doc(db, 'users', userId);
@@ -179,6 +180,11 @@ cardDiv && cardDiv.addEventListener('click', async (e)=> {
     
     console.log('data saved successfully');
     
+  } else {
+    btn.setAttribute('data-bs-toggle', 'modal')
+    btn.setAttribute('data-bs-target', '#signModal');
+    btn.click()
+  }
   }
 })
 
