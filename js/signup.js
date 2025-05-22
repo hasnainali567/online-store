@@ -62,44 +62,6 @@ passInp.addEventListener("input", () => {
   let passLower = checkCondition(pass.match(/[a-z]/), validation[2], validation[2].innerText);
   let passNum = checkCondition(pass.match(/[0-9]/), validation[3], validation[3].innerText);
  
-  // if (pass.length >= 8) {
-  //   let text = (validation[0].innerText);
-  //   validation[0].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
-  //   passLength = true;
-  // } else {
-  //   passLength = false;
-  //   validation[0].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 8 characters`
-    
-  // }
-  
-  // if (pass.match(/[A-Z]/)) {
-  //   let text = (validation[1].innerText);
-  //   validation[1].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
-  //   passUpper = true;
-  // } else {
-  //   passUpper = false;
-  //   validation[1].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 1 upper case`
-  // }
-
-
-  // if (pass.match(/[a-z]/)) {
-  //   let text = (validation[2].innerText);
-  //   validation[2].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
-  //   passLower = true;
-  // } else {
-  //   passLower = false;
-  //   validation[2].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 1 lower case`
-  // }
-
-
-  // if (pass.match(/[0-9]/)) {
-  //   let text = (validation[3].innerText);
-  //   validation[3].innerHTML = `<i class="bg-success text-light fa-solid fa-check"></i> ${text}`
-  //   passNum = true;
-  // } else {
-  //   passNum = false;
-  //   validation[3].innerHTML = `<i class="fa-solid fa-xmark"></i>Aleast 1 number`
-  // }
   
   if (passLength && passUpper && passLower && passNum) {
     isPassOk = true;
@@ -109,21 +71,6 @@ passInp.addEventListener("input", () => {
   }
 
 });
-
-// picInt.addEventListener("change", () => {
-//   const file = picInt.files[0];
-
-//   if (file) {
-//     const reader = new FileReader();
-
-//     reader.onload = (e) => {
-//       enterdImage.src = e.target.result;
-//       enterdImage.classList.remove("d-none");
-//     };
-
-//     reader.readAsDataURL(file);
-//   }
-// });
 
 signUPBtn.addEventListener("click", async (e) => {
   e.preventDefault();
@@ -149,18 +96,6 @@ signUPBtn.addEventListener("click", async (e) => {
       email,
     })
     window.location = 'userProfile.html';
-
-    // let file = picInt.files[0];
-
-    // console.log(file);
-    
-
-    // let user = userCredential.user;
-    
-
-    console.log(user);
-    
-    console.log('signup successfully');
     
   } catch (error) {
     console.log("Sign Up Error : ", error.message);

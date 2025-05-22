@@ -94,16 +94,6 @@ function createCards(data) {
                     </div>
                     </div>`;
                     
-                    // let homeCartBtn = document.querySelectorAll('.homeCartBtn');
-                    // console.log(homeCartBtn);
-                    
-                    // homeCartBtn.forEach(elem => {
-                    //   elem.addEventListener('click', (e)=>{
-                    //     console.log(e.target);
-                        
-                    //   })
-                    // })
-                    
                     cardDiv && (cardDiv.innerHTML += card);
                     
                     spinner.classList.add("spinner-hide");
