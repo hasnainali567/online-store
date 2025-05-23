@@ -80,3 +80,77 @@ body{
     padding: 0;
 }
 
+
+
+#homeProfileBtn > img {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    border: 2px solid black;
+    box-shadow: 2px 2px 5px gray;
+    transition: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#homeProfileBtn > img:hover {
+    transform: scale(1.1);
+}
+
+
+/* 🌙 Dark Mode Navbar */
+
+.dark-mode #navbarDiv {
+    background-color: #121212 !important;
+}
+.dark-mode #navbar {
+  background-color: #121212 !important;
+}
+
+.dark-mode #navbar .navbar-brand,
+.dark-mode #navbar .nav-link,
+.dark-mode #navbar .dropdown-item,
+.dark-mode #navbar .form-control,
+.dark-mode #navbar .btn,
+.dark-mode #navbar .user i {
+  color: #f1f1f1 !important;
+}
+
+
+.dark-mode #navbar .form-control::placeholder {
+    color: gray;
+}
+
+.dark-mode #navbar .form-control {
+  background-color: #1e1e1e;
+  border: 1px solid #555;
+}
+
+.dark-mode #navbar .btn-outline-dark {
+  color: #f1f1f1;
+  border-color: #f1f1f1;
+}
+
+.dark-mode #navbar .btn-outline-dark:hover {
+  background-color: #f1f1f1;
+  color: #121212;
+}
+
+.dark-mode #navbar .dropdown-menu {
+  background-color: #1e1e1e;
+}
+
+.dark-mode #navbar .dropdown-item:hover {
+  background-color: #2c2c2c;
+}
+
+.checkCart {
+    animation: checkCart 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+@keyframes checkCart {
+    0%{
+        transform: rotate(360deg) scale(0);
+    } 100% {
+        transform: rotate(0) scale(1);
+    }
+}

@@ -166,79 +166,84 @@ verifyBtn.addEventListener('click', () => {
 backBtn.addEventListener('click', () => {
     window.location = backBtn.value;
 })
+
+
 editBtn.forEach(elem => {
     elem.addEventListener('click', () => {
-    const saveEditBtn = document.getElementById('saveEditBtn');
-    const editName = document.getElementById('editName');
-    const editImage = document.getElementById('editImage');
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const editCloseBtn = document.getElementById('editCloseBtn');
 
-    // Remove previous listener to prevent multiple triggers
-    const newSaveBtn = saveEditBtn.cloneNode(true);
-    saveEditBtn.parentNode.replaceChild(newSaveBtn, saveEditBtn);
+        const editName = document.getElementById('editName');
+        const editImage = document.getElementById('editImage');
 
-    newSaveBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
+        // Remove previous listeners
+        const newSaveBtn = saveEditBtn.cloneNode(true);
+        saveEditBtn.parentNode.replaceChild(newSaveBtn, saveEditBtn);
 
-        const nameValue = editName.value.trim();
-        const file = editImage.files[0];
+        newSaveBtn.addEventListener('click', async (e) => {
+            console.log(newSaveBtn);
 
-        // ✅ Name validation
-        if (nameValue.length < 3) {
-            editName.value = '';
-            editName.placeholder = 'At least 3 characters';
-            return;
-        }
+            newSaveBtn.innerText = '';
+            newSaveBtn.innerHTML = `<div id="saveEdit" class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>`;
+            e.preventDefault();
 
-        // ✅ File validation
-        if (!file) {
-            return alert("Please select a profile image.");
-        }
+            const nameValue = editName.value.trim();
+            const file = editImage.files[0];
 
-        const validImageTypes = /^image\/(jpeg|png|jpg|webp)$/;
-        if (!validImageTypes.test(file.type)) {
-            return alert("Invalid file type. Only JPG, JPEG, PNG or WebP allowed.");
-        }
+            if (nameValue.length < 3) {
+                editName.value = '';
+                editName.placeholder = 'At least 3 characters';
+                return;
+            }
 
-        console.log(file);
-        
+            if (!file) {
+                return alert("Please select a profile image.");
+            }
 
+            if (file.size > 1048000) {
+                alert('file is too large Plz select small one')
+            }
 
-        try {
+            const validImageTypes = /^image\/(jpeg|png|jpg|webp)$/;
+            if (!validImageTypes.test(file.type)) {
+                return alert("Invalid file type. Only JPG, JPEG, PNG or WebP allowed.");
+            }
 
-            // Upload to Firebase Storage
-            const storageRef = ref(storage, `users/${auth.currentUser.uid}/profile.jpg`);
-            console.log(storageRef);
-            await uploadBytes(storageRef, file);
-            console.log('hi');
-            
-            const downloadURL = await getDownloadURL(storageRef);
+            // Convert image to base64
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64Image = reader.result; // image in base64
 
-            console.log(downloadURL);
-            
+                try {
+                    // Save base64 image and name to Firestore
+                    await updateDoc(doc(db, "users", auth.currentUser.uid), {
+                        name: nameValue,
+                        profileURL: base64Image
+                    });
 
-            // Update Firestore
-            await updateDoc(doc(db, "users", auth.currentUser.uid), {
-                name: nameValue,
-                profileURL: downloadURL
-            });
+                    // Update UI
+                    profilePic.src = base64Image;
+                    editName.value = nameValue;
 
+                    newSaveBtn.innerHTML = '';
+                    newSaveBtn.innerText = 'Save'
+                    editCloseBtn.click();
 
-            // Update profile image in UI
-            profilePic.src = downloadURL;
+                } catch (error) {
+                    console.error("Error saving base64 image:", error);
+                    alert("Something went wrong.");
+                }
+            };
 
-            alert("Profile updated successfully!");
+            reader.readAsDataURL(file); // read file as base64
 
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
-            modal.hide();
-        } catch(error) {
-            console.error(error + 'error');
-            console.log(error.message);
-            
-        }
+        });
+
     });
 });
-})
+
 
 
 

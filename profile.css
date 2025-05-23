@@ -18,8 +18,31 @@ body {
 
 #profilePic {
     border-radius: 50%;
+    height: 150px;
+    width: 150px;
 }
 
+
+#saveEdit {
+    height: 27px;
+    width: 27px;
+    margin-inline: 10px;
+    border-width: 4px;
+
+}
+
+#homeProfileBtn {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+}
+
+#signUPBtnSpinner {
+    height: 10px !important;
+    width: 10px;
+    margin-inline: 10px;
+    border-width: 4px;
+}
 .cart-image {
     height: 100px;
     width: 100px;

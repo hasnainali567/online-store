@@ -20,8 +20,8 @@
 <body class="bg-dark">
 
 
-    <div class="container-fluid bg-body-tertiary">
-        <nav class="navbar navbar-expand-md bg-body-tertiary container-sm">
+    <div id="navbarDiv" class="container-fluid w-100 bg-body-tertiary">
+        <nav id="navbar" class="navbar navbar-expand-md bg-body-tertiary container-fluid">
             <div class="container-fluid">
                 <a class="navbar-brand" href="index.html">H&M Store</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -30,14 +30,14 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-md-center">
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="index.html">Home</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Categories
+                            aria-expanded="false">
+                            Categories
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="categoryBtn cate dropdown-item" href="#">Action</a></li>
@@ -53,21 +53,32 @@
                                     </a>
                                 </li>
                             </ul>
-
+                            
+                            
                         </li>
+                        <li class="nav-item p-0 ms-md-2">
+                            <button id="toggleTheme" class="btn btn-sm btn-dark align-items-center">
+                                🌙 Dark Mode
+                            </button>
+                        </li>
+                        
                     </ul>
+                    
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button class="btn btn-outline-dark" type="submit" id="searchBtn">Search</button>
+                        <button class="btn btn-outline-dark me-2" type="submit" id="searchBtn">Search</button>
+                        <a href="javascript:void(0)" id="homeProfileBtn" class="user cursor-pointer text-dark"><i
+                                class="fa-solid fa-user-circle" data-bs-toggle="modal" data-bs-target="#signModal"
+                                aria-hidden="true"></i></a>
                     </form>
                 </div>
             </div>
         </nav>
     </div>
     <div id="main">
-        <div id="product-detail" class="container-sm">
+        <div id="product-detail" class="container-fluid">
 
-            
+
         </div>
 
     </div>
@@ -82,27 +93,50 @@
     </div>
 
 
-    <div class="modal fade" id="moreCategoriesModal" tabindex="-1" aria-labelledby="moreCategoriesModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="moreCategoriesModalLabel">More Categories</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- You can populate this with dynamic categories via JavaScript -->
-        <p>Here are more categories you can choose from:</p>
-        <div id="modal-category-list" class="d-flex flex-wrap gap-2">
-          
-          <!-- ... -->
+
+    <div class="modal fade" id="signModal" tabindex="-1" aria-labelledby="signModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signModalLabel">Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex flex-column gap-2">
+                    <a href="signup.html" id="signUPBtn" class="btn btn-outline-dark">Sign
+                        Up</a>
+                    <a href="login.html" id="logInBtn" class="btn btn-dark">Log In
+                    </a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="modal-close btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="modal-close btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
     </div>
-  </div>
-</div>
+
+    <div class="modal fade" id="moreCategoriesModal" tabindex="-1" aria-labelledby="moreCategoriesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="moreCategoriesModalLabel">More Categories</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- You can populate this with dynamic categories via JavaScript -->
+                    <p>Here are more categories you can choose from:</p>
+                    <div id="modal-category-list" class="d-flex flex-wrap gap-2">
+
+                        <!-- ... -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="modal-close btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script type="module" src="/js/product.js"></script>

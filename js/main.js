@@ -1,4 +1,4 @@
-import { auth , doc, db, onAuthStateChanged , updateDoc, arrayUnion} from "./firebase.js";
+import { auth, doc, db, onAuthStateChanged, updateDoc, arrayUnion, getDoc } from "./firebase.js";
 
 
 let cardDiv = document.getElementById("cards-div");
@@ -13,11 +13,23 @@ let searchQuery = params.get('search');
 let cateQuery = params.get('category');
 
 
-onAuthStateChanged(auth, async (user)=> {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     userId = user.uid
     homeProfileBtn.setAttribute('href', 'userProfile.html')
-    
+    homeProfileBtn.innerHTML = `<div id="signUPBtnSpinner" class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>`
+    const docRef = doc(db, 'users', userId)
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      if (data.profileURL) {
+        homeProfileBtn.innerHTML = `<img src="${data.profileURL}" />`
+      }
+    }
   }
 })
 
@@ -29,7 +41,7 @@ let data = async () => {
   try {
     let response = await Promise.all(promises);
     let result = await Promise.all(response.map((r) => r.json()));
-    
+
     let [res] = result;
     allProducts = res;
     createCards(res);
@@ -56,28 +68,28 @@ data();
 
 function createCards(data) {
   data = data.products;
-  
+
   if (data.length < 1) {
     cardDiv.innerHTML =
-    '<h2 class="text-light align-self-center">No Products Found!</h2>';
+      '<h2 class="text-light align-self-center">No Products Found!</h2>';
   } else {
     cardDiv && (cardDiv.innerHTML = "");
     for (let i = 0; i < data.length; i++) {
       let description = data[i].description;
       let title = data[i].title;
-      
+
       let category = data[i].category;
-      
+
       if (!categoryArr.includes(category)) {
         categoryArr.push(category);
       }
-      
+
       if (title.length > 22) {
         title = title.slice(0, 22);
         title = title.slice(0, title.lastIndexOf(" "));
         title = title + " ...";
       }
-      
+
       if (description.length > 50) {
         description = description.slice(0, 51);
         description = description.slice(0, description.lastIndexOf(" "));
@@ -93,22 +105,22 @@ function createCards(data) {
                     <a href="product.html?id=${data[i].id}" class="btn btn-dark d-flex flex-column">Read More</a></div>
                     </div>
                     </div>`;
-                    
-                    cardDiv && (cardDiv.innerHTML += card);
-                    
-                    spinner.classList.add("spinner-hide");
-                  }
+
+      cardDiv && (cardDiv.innerHTML += card);
+
+      spinner.classList.add("spinner-hide");
+    }
   }
 }
 
 function ModalCategoriesBtn(data, categoryArr) {
   let modalCategoryList = document.getElementById("modal-category-list");
   let cate = document.querySelectorAll(".cate");
-  
+
   for (let i = 0; i < cate.length; i++) {
     cate[i].innerText = categoryArr[i];
   }
-  
+
   let allBtns = "";
   for (let i = 0; i < categoryArr.length; i++) {
     allBtns += `<button class="categoryBtn btn btn-outline-dark">${categoryArr[i]}</button>`;
@@ -116,7 +128,7 @@ function ModalCategoriesBtn(data, categoryArr) {
   modalCategoryList.innerHTML = allBtns;
 
   let categoryBtn = document.querySelectorAll(".categoryBtn");
-  
+
   categoryBtn.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       let cat = e.target.innerText;
@@ -142,13 +154,13 @@ searchBtn.addEventListener("click", (e) => {
   } else {
     let searchVal = search.value.trim().replace(/\s+/g, " ").toLowerCase();
     console.log(searchVal);
-    
+
     filterBySearch(searchVal);
   }
 });
 
 function filterBySearch(search) {
-  
+
   cardDiv.innerHTML = "";
   spinner.classList.remove("spinner-hide");
   let filtered = allProducts.products.filter((item) => {
@@ -156,9 +168,9 @@ function filterBySearch(search) {
     let desc = item.description.toLowerCase();
     return title.includes(search) || desc.includes(search);
   });
-  
+
   createCards({ products: filtered });
-  
+
   setTimeout(() => {
     spinner.classList.add("spinner-hide");
   }, 300);
@@ -166,25 +178,25 @@ function filterBySearch(search) {
 
 
 
-cardDiv && cardDiv.addEventListener('click', async (e)=> {
+cardDiv && cardDiv.addEventListener('click', async (e) => {
   const btn = e.target.closest('.homeCartBtn')
   if (btn) {
     if (auth.currentUser) {
-    let id = btn.getAttribute('data-id')
-    console.log(userId , id);
-    let userRef = doc(db, 'users', userId);
+      let id = btn.getAttribute('data-id')
+      console.log(userId, id);
+      let userRef = doc(db, 'users', userId);
 
-    await updateDoc(userRef, {
-      cart : arrayUnion(id)
-    })
-    
-    console.log('data saved successfully');
-    
-  } else {
-    btn.setAttribute('data-bs-toggle', 'modal')
-    btn.setAttribute('data-bs-target', '#signModal');
-    btn.click()
-  }
+      await updateDoc(userRef, {
+        cart: arrayUnion(id)
+      })
+
+      btn.innerHTML = `<i class="checkCart fa-solid fa-check mx-3"></i>`
+
+    } else {
+      btn.setAttribute('data-bs-toggle', 'modal')
+      btn.setAttribute('data-bs-target', '#signModal');
+      btn.click()
+    }
   }
 })
 
@@ -193,3 +205,6 @@ export {
   allProducts,
   categoryArr,
 }
+
+
+
