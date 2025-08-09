@@ -117,6 +117,8 @@ onAuthStateChanged(auth, async (user) => {
             userName.forEach((elem) => elem.innerText = name)
         }
         spinner.classList.add('d-none')
+    } else {
+        location.href = 'index.html'
     }
 })
 
