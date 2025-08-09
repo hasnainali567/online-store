@@ -1,4 +1,4 @@
-import { auth, signOut, onAuthStateChanged, getDoc, db, doc, sendEmailVerification, updateDoc, storage, uploadBytes, getDownloadURL, ref } from "./firebase.js";
+import { auth, signOut, onAuthStateChanged, getDoc, db, doc, sendEmailVerification, updateDoc, storage, uploadBytes, getDownloadURL, ref, serverTimestamp, addDoc, collection, arrayRemove, arrayUnion } from "./firebase.js";
 
 let logoutBtn = document.getElementById('logoutBtn');
 let verifyBtn = document.getElementById('verifyBtn');
@@ -6,10 +6,10 @@ let profilePic = document.getElementById('profilePic');
 let cartDiv = document.getElementById('cartDiv');
 let backBtn = document.getElementById('backBtn');
 let editCart = document.getElementById('editCart');
+let navMenu = document.querySelector('.nav-menu')
 let saveEditBtn = document.getElementById('saveEditBtn');
 let spinner = document.getElementById('spinner');
 let editBtn = document.querySelectorAll('.editBtn');
-console.log(editBtn);
 
 
 let originalTitles = [];
@@ -88,9 +88,13 @@ onAuthStateChanged(auth, async (user) => {
             verifyBtn.innerText = 'Verifeid';
             verifyBtn.setAttribute('disabled', true);
             verifyBtn.classList.add('btn-success')
+
+            if (user.email === 'hasnain5f7@gmail.com') {
+                console.log(navMenu.querySelector('.db-btn').classList.remove('d-none'))
+                
+            }
         }
         if (docSnap.exists()) {
-            console.log('data---->', docSnap.data());
             let data = docSnap.data();
 
             if (data.profileURL) {
@@ -100,41 +104,12 @@ onAuthStateChanged(auth, async (user) => {
 
 
             if (data.cart) {
-                for (let i = 0; i < data.cart.length; i++) {
-                    let product = await fetch(`https://dummyjson.com/products/${data.cart[i]}`);
-                    product = await product.json();
-                    originalTitles.push(product.title);
-                    originalDescs.push(product.description);
-
-
-                    const cartElem = `<div class="bg-light text-dark p-2 p-md-3 rounded w-100 mt-4">
-                        <div class="card-body ">
-                            <div class="d-flex cartText">
-                                <div class="col-auto d-flex align-items-center">
-                                    <div class="cartCheck d-none form-check">
-                                    <input class="form-check-input bg-dark text-light" type="checkbox" value="" id="checkDefault">
-                                    </div>
-                                    <img src="${product.images[0]}"
-                                        class="d-sm-block img-thumbnail cart-image me-2 m-sm-0 me-sm-2" alt="...">
-                                    </div>
-                                <div class="col-auto col-sm-10 d-flex flex-column flex-md-row flex-fill">
-                                    <div class="flex-fill">
-                                        <h3 class="cart-product-name m-0">${product.title}</h3>
-                                        <p class="cart-product-des mb-2 m-sm-0 text-wrap">${product.description}</p>
-                                    </div>
-                                    <div class="col-auto d-flex flex-row flex-md-column justify-content-between">
-                                        <span class="align-self-end rounded btn btn-outline-dark "><i
-                                                class="fa-solid fa-trash"></i></span>
-                                        <button class="btn btn-dark">Check out</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`
-
-                    cartDiv.innerHTML += cartElem;
-                    handleResize();
-                }
+                let sortedCart = data.cart.sort((a, b) => {
+                    return b.addedAt - a.addedAt
+                })
+                console.log(sortedCart);
+                
+                renderCartItem(sortedCart)
 
             }
 
@@ -146,9 +121,123 @@ onAuthStateChanged(auth, async (user) => {
 })
 
 
+const renderCartItem = async (data) => {
+    cartDiv.innerHTML = ''
+    for (let i = 0; i < data.length; i++) {
+
+        let product = data[i];
+        let productId = product.id;
+        originalTitles.push(product.title);
+        originalDescs.push(product.description);
+
+
+        const cartElem = `<div id="cart-item" class="bg-light text-dark p-2 p-md-3 rounded w-100 mt-4">
+                        <div class="card-body ">
+                            <div class="d-flex cartText">
+                                <div class="col-auto d-flex align-items-center">
+                                    <div class="cartCheck d-none form-check">
+                                    <input class="form-check-input bg-dark text-light" type="checkbox" value="" id="checkDefault">
+                                    </div>
+                                    <img src="${product.image}" loading="lazy" height="100" width="100"
+                                        class="d-sm-block img-thumbnail cart-image me-2 m-sm-0 me-sm-2" alt="...">
+                                    </div>
+                                <div class="col-auto col-sm-10 d-flex flex-column flex-md-row flex-fill">
+                                    <div class="flex-fill">
+                                        <h3 class="cart-product-name m-0">${product.title}</h3>
+                                        <p class="cart-product-des mb-2 m-sm-0 text-wrap">${product.description}</p>
+                                    </div>
+                                    <div class="col-auto d-flex flex-row flex-md-column justify-content-between">
+                                        <span class="del-cart-item align-self-end rounded btn btn-outline-dark " disabled="${data[i].checkedOut}" data-id="${productId}"><i
+                                                class="fa-solid fa-trash"></i></span>
+                                        <button class="checkout-cart-item btn ${data[i].checkedOut ? 'btn-success' : 'btn-dark'}" ${data[i].checkedOut ? 'disabled' : ''} data-id="${productId}">${data[i].checkedOut ? 'Checked Out' : 'Check Out'}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
+
+        cartDiv.innerHTML += cartElem;
+        handleResize();
+    }
+}
+
+cartDiv && cartDiv.addEventListener('click', async (e) => {
+    const checkOutBtn = e.target.closest('.checkout-cart-item');
+
+    const delBtn = e.target.closest('.del-cart-item');
+
+    if (delBtn) {
+        const productId = delBtn.getAttribute('data-id');
+        const checkOut = delBtn.getAttribute('disabled')
+        const userId = auth.currentUser.uid;
+
+        const cartItemDiv = delBtn.closest('#cart-item');
+
+        if (cartItemDiv) {
+            cartItemDiv.remove();
+        }
+
+        const userRef = doc(db, 'users', userId)
+
+        let userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+            let cart = userSnap.data().cart || [];
+            console.log(cart);
+            
+            cart = cart.filter(item => item.id !== productId);
+
+            await updateDoc(userRef, { cart });
+        }
+
+    }
+
+    if (checkOutBtn) {
+        const productId = checkOutBtn.getAttribute('data-id');
+        checkOutBtn.setAttribute('disabled', true);
+        checkOutBtn.innerText = '';
+        checkOutBtn.innerHTML = `<div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>`;
+
+        const userId = auth.currentUser.uid;
+        const checkOut = checkOutBtn.getAttribute('disabled');
+        // Send checkout request to admin
+        // Example: Add a "checkoutRequests" document in Firestore for admin to review
+
+        try {
+            await addDoc(collection(db, "checkoutRequests"), {
+                userId: auth.currentUser.uid,
+                userEmail: auth.currentUser.email,
+                productId,
+                requestedAt: serverTimestamp()
+            });
+            const userRef = doc(db, 'users', userId)
+            let userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                let cart = userSnap.data().cart || [];
+                cart = cart.map(item =>
+                    item.id === productId ? { ...item, checkedOut: checkOut } : item
+                );
+
+                await updateDoc(userRef, { cart });
+            }
+            checkOutBtn.innerText = 'Checked Out';
+            checkOutBtn.classList.remove('btn-dark');
+            checkOutBtn.classList.add('btn-success');
+        } catch (error) {
+            checkOutBtn.removeAttribute('disabled');
+            checkOutBtn.innerText = 'Check Out';
+            checkOutBtn.classList.remove('btn-success');
+            checkOutBtn.classList.add('btn-dark');
+
+        }
+    }
+
+})
+
+
 logoutBtn.addEventListener('click', () => {
     signOut(auth).then(() => {
-        console.log('logout success');
         window.location = 'index.html'
 
     })
@@ -181,7 +270,6 @@ editBtn.forEach(elem => {
         saveEditBtn.parentNode.replaceChild(newSaveBtn, saveEditBtn);
 
         newSaveBtn.addEventListener('click', async (e) => {
-            console.log(newSaveBtn);
 
             newSaveBtn.innerText = '';
             newSaveBtn.innerHTML = `<div id="saveEdit" class="spinner-border" role="status">

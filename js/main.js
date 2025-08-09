@@ -1,4 +1,4 @@
-import { auth, doc, db, onAuthStateChanged, updateDoc, arrayUnion, getDoc } from "./firebase.js";
+import { auth, doc, db, onAuthStateChanged, updateDoc, collection, arrayUnion, getDoc, getDocs, serverTimestamp, Timestamp } from "./firebase.js";
 
 
 let cardDiv = document.getElementById("cards-div");
@@ -34,18 +34,17 @@ onAuthStateChanged(auth, async (user) => {
 })
 
 
-let promises = [fetch("https://dummyjson.com/products")];
 
 let allProducts = [];
 let data = async () => {
   try {
-    let response = await Promise.all(promises);
-    let result = await Promise.all(response.map((r) => r.json()));
+    let products = await getDocs(collection(db, 'products'))
+    allProducts = products.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    let [res] = result;
-    allProducts = res;
-    createCards(res);
-    ModalCategoriesBtn(res, categoryArr);
+    console.log(allProducts);
+    createCards(allProducts)
+
+    ModalCategoriesBtn(allProducts, categoryArr);
     if (searchQuery) {
       filterBySearch(searchQuery)
       searchQuery = ''
@@ -67,7 +66,7 @@ let data = async () => {
 data();
 
 function createCards(data) {
-  data = data.products;
+  console.log(data);
 
   if (data.length < 1) {
     cardDiv.innerHTML =
@@ -139,8 +138,8 @@ function ModalCategoriesBtn(data, categoryArr) {
 
 function filterByCategory(category, data) {
   cardDiv && (cardDiv.innerHTML = "");
-  let filtered = data.products.filter((item) => item.category === category);
-  createCards({ products: filtered });
+  let filtered = data.filter((item) => item.category === category);
+  createCards(filtered);
   let modalCloseBtn = document.querySelector(".modal-close");
   modalCloseBtn.click();
 }
@@ -148,7 +147,8 @@ function filterByCategory(category, data) {
 searchBtn.addEventListener("click", (e) => {
   e.preventDefault();
   let search = e.target.parentElement.querySelector(".form-control");
-  if (search.value.length < 1) {
+  if (search.value.trim().length < 1) {
+    search.value = "";
     search.placeholder = "Plz Enter Something Here";
     createCards(allProducts);
   } else {
@@ -163,13 +163,13 @@ function filterBySearch(search) {
 
   cardDiv.innerHTML = "";
   spinner.classList.remove("spinner-hide");
-  let filtered = allProducts.products.filter((item) => {
+  let filtered = allProducts.filter((item) => {
     let title = item.title.toLowerCase();
     let desc = item.description.toLowerCase();
-    return title.includes(search) || desc.includes(search);
+    return title.includes(search) || desc.includes(search) || item.category.toLowerCase().includes(search);
   });
 
-  createCards({ products: filtered });
+  createCards(filtered);
 
   setTimeout(() => {
     spinner.classList.add("spinner-hide");
@@ -183,11 +183,20 @@ cardDiv && cardDiv.addEventListener('click', async (e) => {
   if (btn) {
     if (auth.currentUser) {
       let id = btn.getAttribute('data-id')
-      console.log(userId, id);
+      let product = allProducts.find(item => item.id === id);
       let userRef = doc(db, 'users', userId);
 
       await updateDoc(userRef, {
-        cart: arrayUnion(id)
+        cart: arrayUnion({
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          image: product.images[0],
+          description: product.description,
+          brand: product.brand,
+          checkedOut: false,
+          addedAt : Timestamp.now(),
+        })
       })
 
       btn.innerHTML = `<i class="checkCart fa-solid fa-check mx-3"></i>`

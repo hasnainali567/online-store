@@ -27,11 +27,12 @@
             <button value="index.html" id="backBtn" class="logout btn btn-secondary btn-sm me-2 me-sm-3 text-dark"><a
                     href="index.html" class="text-light d-flex align-items-center text-decoration-none"><i
                         class="fa-solid fa-arrow-left me-1"></i>Back</a></button>
-            <a class="navbar-brand align-self-start" href="#">My Profile</a>
+            <a class="navbar-brand align-self-start d-none d-sm-block" href="#">My Profile</a>
         </div>
-        <div class="ms-auto text-white d-flex align-items-center ">
-            <span class=" d-none d-sm-block">Welcome, <span class="userName">User</span></span>
-            <button class="logout btn btn-outline-light btn-sm ms-3" id="logoutBtn">Logout</button>
+        <div class="nav-menu ms-auto text-white d-flex align-items-center ">
+            <span class=" d-none d-md-block">Welcome, <span class="userName">User</span></span>
+            <a href="dashboard.html" type="button" class="db-btn d-none btn btn-outline-light btn-sm ms-3">Go to DashBoard</a>
+            <button type="button" class="logout btn btn-outline-light btn-sm ms-3" id="logoutBtn">Logout</button>
 
         </div>
         
@@ -62,7 +63,8 @@
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <!-- <button type="button" class="editBtn d-none d-sm-block btn btn-dark mt-4">Go to DashBoard</button> -->
                         <button type="button" class="editBtn d-none d-sm-block btn btn-dark mt-4" data-bs-toggle="modal"
                             data-bs-target="#editModal">
                             Edit Profile

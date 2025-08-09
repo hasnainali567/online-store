@@ -18,6 +18,12 @@ let passInp = document.getElementById("inputPassword6");
 // let picInt = document.getElementById("formFile");
 // let enterdImage = document.getElementById("enterdImage");
 
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("User is already logged in");
+    window.location.href = "userProfile.html";
+  }
+});
 let isNameOk = false;
 let isEmailOk = false;
 let isPassOk = false;

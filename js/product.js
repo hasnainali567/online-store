@@ -1,3 +1,4 @@
+import { collection, getDoc, db, doc } from "./firebase.js";
 import { allProducts, categoryArr } from "./main.js";
 
 let searchBtn = document.getElementById("searchBtn");
@@ -51,12 +52,10 @@ let id = params.get("id");
 
 let item = async () => {
   try {
-    let reqApi = await fetch(`https://dummyjson.com/products/${id}`);
-    let res = await reqApi.json();
-
-    console.log(res);
-
-    createProductPage(res);
+    let product = await getDoc(doc(db, 'products', id));
+    console.log(product.data());
+    
+    createProductPage(product.data());
     ModalCategoriesBtn(allProducts, categoryArr);
   } catch (error) {
     console.log(error);
@@ -68,7 +67,7 @@ function createProductPage(data) {
   let productDetail = document.getElementById("product-detail");
   let product = `<div class="wrapper">
     <div class="product-img">
-    <button value="index.html" class="backBtn btn btn-secondary "><i class="fa-solid fa-arrow-left"></i></button>
+    <a  href="index.html" class="backBtn btn btn-secondary "><i class="fa-solid fa-arrow-left"></i></a >
     <img src="${data.images[0]}" height="420" width="327">
     </div>
     <div class="product-info">
@@ -111,17 +110,7 @@ function createProductPage(data) {
   const minusBtn = document.querySelector(".minus");
   const plusBtn = document.querySelector(".plus");
   const qtyInput = document.querySelector(".qty-input");
-  const backBtn = document.querySelector('.backBtn')
   
-  // backBtn.forEach((elem)=> {
-  //   elem.addEventListener('click', (e)=> {
-  //     window.location = e.target.value;
-  //   })
-  // })
-
-  backBtn.addEventListener('click', (e)=>{
-    window.location = e.target.value;
-  })
   minusBtn &&
   minusBtn.addEventListener("click", () => {
     if (qtyInput.value > 1) {
